@@ -1,4 +1,5 @@
-import pg from "pg";
+import pkg from "pg";
+const { Pool } = pkg;
 import env from "dotenv";
 
 env.config();
@@ -7,7 +8,7 @@ env.config();
  * This file handles connecting to the database
  */
 
-const db = new pg.Client({
+const db = new Pool({
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
   host: process.env.PG_HOST,
@@ -15,7 +16,9 @@ const db = new pg.Client({
   database: process.env.PG_DATABASE,
 });
 
-db.connect();
+db.connect()
+  .then(() => console.log("Connected to PostgreSQL"))
+  .catch((err) => console.error("Database connection error:", err.stack));
 
 db.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
